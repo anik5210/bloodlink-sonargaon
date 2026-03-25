@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodLink Sonargaon - জীবন বাঁচান</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; scroll-behavior: smooth; overflow-x: hidden; background: #fffafa; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 28px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeInUp 0.5s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-btn.active { color: #dc2626; border-bottom: 2px solid #dc2626; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-lg shadow-sm p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-black text-red-600 flex items-center gap-2">
+                <span class="animate-pulse">🩸</span> BloodLink
+            </h1>
+            <div class="flex gap-5 text-sm md:text-base">
+                <button onclick="showTab('home')" id="btn-home" class="nav-btn active font-bold text-gray-700">নিবন্ধন</button>
+                <button onclick="showTab('search')" id="btn-search" class="nav-btn font-bold text-gray-700">খুঁজুন</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto mt-6 p-4 pb-24">
+        <section id="home" class="tab-content active">
+            <div class="glass-card p-8 shadow-2xl border-t-4 border-red-500">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">রক্তদাতা নিবন্ধন</h2>
+                <form id="regForm" class="space-y-5">
+                    <input type="text" id="name" placeholder="আপনার পূর্ণ নাম" class="w-full p-4 rounded-2xl border-none ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-red-500 transition" required>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="group" class="p-4 rounded-2xl ring-1 ring-gray-200 bg-white" required>
+                            <option value="">রক্তের গ্রুপ</option>
+                            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                            <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+                        </select>
+                        <select id="union" class="p-4 rounded-2xl ring-1 ring-gray-200 bg-white" required>
+                            <option value="">ইউনিয়ন (সোনারগাঁও)</option>
+                            <option>পৌরসভা</option><option>মোগরাপাড়া</option><option>কাঁচপুর</option>
+                            <option>বৈদ্যেরবাজার</option><option>বারদী</option><option>সনমান্দি</option>
+                            <option>পিরোজপুর</option><option>শম্ভুপুরা</option><option>সাদিপুর</option>
+                            <option>নোয়াগাঁও</option><option>জামপুর</option>
+                        </select>
+                    </div>
+                    <input type="tel" id="phone" placeholder="মোবাইল নাম্বার" class="w-full p-4 rounded-2xl border-none ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-red-500 transition" required>
+                    <div class="bg-white/50 p-4 rounded-2xl">
+                        <label class="block text-xs text-gray-500 mb-2 ml-1 font-bold uppercase">শেষ রক্তদানের তারিখ (ঐচ্ছিক)</label>
+                        <input type="date" id="lastDate" class="w-full p-2 border-b-2 border-gray-200 outline-none focus:border-red-500 bg-transparent transition">
+                    </div>
+                    <button type="submit" id="submitBtn" class="w-full bg-red-600 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-red-700 active:scale-95 text-lg uppercase transition">নিবন্ধন করুন</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="search" class="tab-content">
+            <div class="glass-card p-6 shadow-xl mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">🔍 ডোনার খুঁজুন</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <select id="sGroup" onchange="loadDonors()" class="p-4 rounded-xl border-none ring-1 ring-gray-100 outline-none bg-white/80">
+                        <option value="">সব রক্তের গ্রুপ</option>
+                        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                        <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+                    </select>
+                    <select id="sUnion" onchange="loadDonors()" class="p-4 rounded-xl border-none ring-1 ring-gray-100 outline-none bg-white/80">
+                        <option value="">সব ইউনিয়ন</option>
+                        <option>পৌরসভা</option><option>মোগরাপাড়া</option><option>কাঁচপুর</option>
+                        <option>বৈদ্যেরবাজার</option><option>বারদী</option><option>সনমান্দি</option>
+                        <option>পিরোজপুর</option><option>শম্ভুপুরা</option><option>সাদিপুর</option>
+                        <option>নোয়াগাঁও</option><option>জামপুর</option>
+                    </select>
+                </div>
+            </div>
+            <div id="donorList" class="space-y-4"></div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // আপনার প্রজেক্টের কনফিগ তথ্য
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXy3ewgICbU3b0jjTENHnnmuKjuwOp9XU",
+            authDomain: "bloodlink-67c07.firebaseapp.com",
+            projectId: "bloodlink-67c07",
+            storageBucket: "bloodlink-67c07.firebasestorage.app",
+            messagingSenderId: "400463390679",
+            appId: "1:400463390679:web:42c1841f3f76601a8d8d92"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // নিবন্ধন লজিক
+        const regForm = document.getElementById('regForm');
+        regForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true; btn.innerText = "অপেক্ষা করুন...";
+
+            try {
+                await addDoc(collection(db, "donors"), {
+                    name: document.getElementById('name').value,
+                    group: document.getElementById('group').value,
+                    union: document.getElementById('union').value,
+                    phone: document.getElementById('phone').value,
+                    lastDate: document.getElementById('lastDate').value,
+                    createdAt: new Date()
+                });
+                alert('ধন্যবাদ! নিবন্ধন সফল হয়েছে।');
+                regForm.reset();
+                window.showTab('search');
+            } catch (err) {
+                alert('ত্রুটি: ' + err.message);
+            }
+            btn.disabled = false; btn.innerText = "নিবন্ধন করুন";
+        });
+
+        // ডাটা লোড ও সার্চ লজিক
+        window.loadDonors = async () => {
+            const container = document.getElementById('donorList');
+            container.innerHTML = '<p class="text-center py-10">লোডিং...</p>';
+            
+            const sG = document.getElementById('sGroup').value;
+            const sU = document.getElementById('sUnion').value;
+            
+            let q = query(collection(db, "donors"), orderBy("createdAt", "desc"));
+            if(sG && sU) q = query(collection(db, "donors"), where("group", "==", sG), where("union", "==", sU));
+            else if(sG) q = query(collection(db, "donors"), where("group", "==", sG));
+            else if(sU) q = query(collection(db, "donors"), where("union", "==", sU));
+
+            const snap = await getDocs(q);
+            container.innerHTML = '';
+
+            if (snap.empty) {
+                container.innerHTML = '<div class="text-center py-20 text-gray-400 font-bold">কোনো ডোনার পাওয়া যায়নি।</div>';
+                return;
+            }
+
+            snap.forEach((doc) => {
+                const d = doc.data();
+                const eligibility = window.checkEligibility(d.lastDate);
+                const card = document.createElement('div');
+                card.className = "glass-card p-6 flex flex-col md:flex-row justify-between items-center shadow-lg transition-transform hover:scale-[1.02] mb-4";
+                card.innerHTML = `
+                    <div class="flex-1 w-full text-center md:text-left">
+                        <h4 class="font-black text-2xl text-gray-800">${d.name}</h4>
+                        <p class="text-sm text-gray-500 font-bold mt-1 uppercase">📍 ${d.union}, সোনারগাঁও</p>
+                        <div class="mt-3 inline-block px-4 py-1 rounded-full text-xs font-black ${eligibility.bg} ${eligibility.color}">${eligibility.status}</div>
+                    </div>
+                    <div class="flex items-center gap-6 mt-6 md:mt-0">
+                        <div class="bg-red-50 w-16 h-16 rounded-2xl flex items-center justify-center border-2 border-red-100 shadow-inner">
+                            <span class="text-2xl font-black text-red-600">${d.group}</span>
+                        </div>
+                        <a href="tel:${d.phone}" class="bg-green-600 text-white p-4 rounded-2xl shadow-lg active:scale-90 transition">
+                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        </a>
+                    </div>`;
+                container.appendChild(card);
+            });
+        };
+    </script>
+
+    <script>
+        // ইউটিলিটি ফাংশন
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
+            if(tabId === 'search') window.loadDonors();
+        }
+
+        function checkEligibility(lastDateStr) {
+            if (!lastDateStr) return { status: "✅ রক্তদান সম্ভব", color: "text-green-600", bg: "bg-green-50" };
+            const diff = Math.ceil(Math.abs(new Date() - new Date(lastDateStr)) / (1000 * 60 * 60 * 24));
+            if (diff >= 120) return { status: "✅ রক্তদান সম্ভব", color: "text-green-600", bg: "bg-green-50" };
+            return { status: `⏳ আরও ${120 - diff} দিন বাকি`, color: "text-red-500", bg: "bg-red-50" };
+        }
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(10, 2.5, 12, 48), new THREE.MeshBasicMaterial({ color: 0xee1d23, wireframe: true }));
+        scene.add(ring); camera.position.z = 22;
+        function animate() { requestAnimationFrame(animate); ring.rotation.x += 0.006; ring.rotation.y += 0.012; renderer.render(scene, camera); }
+        animate();
+    </script>
+</body>
+</html>
