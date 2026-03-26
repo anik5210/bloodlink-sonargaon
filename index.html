@@ -13,9 +13,7 @@
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .nav-btn.active { color: #dc2626; border-bottom: 3px solid #dc2626; }
-        .profile-pic { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #fee2e2; }
         
-        /* Modal Style */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
         .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 30px; max-width: 550px; position: relative; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -76,7 +74,6 @@
                     <div class="flex flex-col items-center">
                         <p class="text-[10px] text-gray-400 font-black uppercase mb-3 tracking-widest">Contact Us</p>
                         <a href="https://www.facebook.com/share/18AVgBdGnb/?mibextid=wwXIfr" target="_blank" class="flex items-center gap-3 bg-[#1877F2] text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition active:scale-95">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                             Facebook Page
                         </a>
                     </div>
@@ -89,20 +86,20 @@
                 <div id="donorList" class="space-y-4"></div>
             </section>
             <section id="profile" class="tab-content">
-                <div id="profileCard" class="glass-card p-8 shadow-xl text-center relative overflow-hidden"></div>
+                <div id="profileCard" class="glass-card p-8 shadow-xl text-center"></div>
             </section>
         </div>
 
         <div id="aboutModal" class="modal">
             <div class="modal-content glass-card shadow-2xl mx-4">
-                <button onclick="closeAbout()" class="absolute top-5 right-5 text-gray-400 hover:text-red-600 text-3xl font-light">×</button>
+                <button onclick="closeAbout()" class="absolute top-5 right-5 text-gray-400 hover:text-red-600 text-3xl">×</button>
                 <h3 class="text-2xl font-black text-red-600 mb-6 border-b pb-3 text-center">About BloodLink</h3>
                 <div class="text-gray-700 leading-relaxed space-y-5 text-justify text-sm md:text-base">
                     <p>BloodLink একটি আধুনিক ও মানবিক রক্তদাতা প্ল্যাটফর্ম, যার লক্ষ্য হলো রক্তদাতা এবং রক্তপ্রয়োজনকারী মানুষের মধ্যে দ্রুত, সহজ ও নির্ভরযোগ্য সংযোগ তৈরি করা।</p>
-                    <p>জরুরি মুহূর্তে রক্ত খুঁজে পাওয়া অনেক সময় কঠিন হয়ে যায়। সেই সমস্যার সমাধান হিসেবেই BloodLink তৈরি করা হয়েছে—যেখানে স্বেচ্ছায় রক্তদাতারা নিজেদের তথ্য যুক্ত করতে পারবেন এবং প্রয়োজনের সময় মানুষ সহজেই উপযুক্ত ডোনার খুঁজে পাবে।</p>
-                    <p>আমরা বিশ্বাস করি, প্রযুক্তির সঠিক ব্যবহার মানবিক সেবাকে আরও সহজ, দ্রুত ও কার্যকর করতে পারে। BloodLink সেই লক্ষ্যেই কাজ করছে—যাতে একটি সঠিক সংযোগ একটি মূল্যবান জীবন বাঁচাতে পারে।</p>
+                    <p>জরুরি মুহূর্তে রক্ত খুঁজে পাওয়া অনেক সময় কঠিন হয়ে যায়। সেই সমস্যার সমাধান হিসেবেই BloodLink তৈরি করা হয়েছে।</p>
+                    <p>আমরা বিশ্বাস করি, প্রযুক্তির সঠিক ব্যবহার মানবিক সেবাকে আরও সহজ, দ্রুত ও কার্যকর করতে পারে।</p>
                 </div>
-                <button onclick="closeAbout()" class="w-full mt-8 bg-gray-900 text-white font-bold py-4 rounded-2xl hover:bg-black transition shadow-lg">ঠিক আছে</button>
+                <button onclick="closeAbout()" class="w-full mt-8 bg-gray-900 text-white font-bold py-4 rounded-2xl">বন্ধ করুন</button>
             </div>
         </div>
 
@@ -112,9 +109,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // আপনার ফায়ারবেস কনফিগারেশন এখানে দিন
         const firebaseConfig = {
             apiKey: "AIzaSyAXy3ewgICbU3b0jjTENHnnmuKjuwOp9XU",
             authDomain: "bloodlink-67c07.firebaseapp.com",
@@ -127,16 +122,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const storage = getStorage(app);
 
-        // লগইন স্ট্যাটাস চেক
         onAuthStateChanged(auth, user => {
             const hero = document.getElementById('hero-section');
             if (user) {
                 document.getElementById('auth-gateway').classList.add('hidden');
                 document.getElementById('app-content').classList.remove('hidden');
                 document.getElementById('main-nav').classList.remove('hidden');
-                hero.classList.add('hidden'); // লগইন থাকলে হিরো সেকশন লুকাবে
+                hero.classList.add('hidden');
                 window.loadDonors();
             } else {
                 document.getElementById('auth-gateway').classList.remove('hidden');
@@ -148,7 +141,6 @@
 
         const getAge = (dob) => Math.abs(new Date(Date.now() - new Date(dob).getTime()).getUTCFullYear() - 1970);
 
-        // প্রোফাইল ভিউ
         window.viewProfile = async (uid) => {
             showTab('profile');
             const docSnap = await getDoc(doc(db, "donors", uid));
@@ -156,22 +148,17 @@
             const isMe = auth.currentUser.uid === uid;
 
             document.getElementById('profileCard').innerHTML = `
-                <div class="relative inline-block mb-6">
-                    <img src="${d.photo || 'https://via.placeholder.com/150'}" class="profile-pic mx-auto shadow-lg">
-                    ${isMe ? `<label class="absolute bottom-1 right-1 bg-red-600 text-white p-2 rounded-full cursor-pointer shadow-lg border-2 border-white"><input type="file" id="picUp" class="hidden" onchange="window.uploadPhoto('${uid}')">📸</label>` : ''}
+                <div class="mb-6 flex justify-center">
+                    <div class="w-28 h-28 bg-red-600 text-white rounded-full flex items-center justify-center text-5xl font-black shadow-xl border-4 border-red-50">
+                        ${d.group}
+                    </div>
                 </div>
                 <h2 class="text-3xl font-black text-gray-800">${d.name}</h2>
-                <div class="flex justify-center gap-2 mt-2">
-                    <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold uppercase">🎂 বয়স: ${getAge(d.dob)}</span>
-                </div>
+                <p class="text-gray-500 font-bold mt-1">🎂 বয়স: ${getAge(d.dob)} বছর</p>
 
-                <div class="grid grid-cols-2 gap-4 my-8">
-                    <div class="bg-red-600 text-white p-5 rounded-3xl shadow-xl shadow-red-100">
-                        <span class="block text-xs opacity-80 font-bold uppercase">রক্তের গ্রুপ</span>
-                        <span class="text-3xl font-black">${d.group}</span>
-                    </div>
+                <div class="grid grid-cols-1 gap-4 my-8">
                     <div class="bg-white border-2 border-red-500 text-red-600 p-5 rounded-3xl">
-                        <span class="block text-xs font-bold uppercase text-gray-400">রক্ত দিয়েছেন</span>
+                        <span class="block text-xs font-bold uppercase text-gray-400">রক্তদান করেছেন</span>
                         <span class="text-3xl font-black">${d.count || 0} বার</span>
                     </div>
                 </div>
@@ -181,7 +168,7 @@
                         <span class="block text-xs font-bold text-gray-400 uppercase">Availability</span>
                         <span class="font-black ${d.isActive ? 'text-green-600' : 'text-gray-400'}">${d.isActive ? '✅ রক্ত দিতে ইচ্ছুক' : '❌ বর্তমানে অনিচ্ছুক'}</span>
                     </div>
-                    ${isMe ? `<button onclick="window.toggleStatus('${uid}', ${d.isActive})" class="bg-white px-4 py-2 rounded-xl shadow-sm text-xs font-bold border hover:bg-gray-50">বদলান</button>` : ''}
+                    ${isMe ? `<button onclick="window.toggleStatus('${uid}', ${d.isActive})" class="bg-white px-4 py-2 rounded-xl shadow-sm text-xs font-bold border">বদলান</button>` : ''}
                 </div>
 
                 <div class="text-left space-y-4 bg-white p-6 rounded-3xl border mb-6">
@@ -195,46 +182,34 @@
             `;
         };
 
-        // ফাংশনসমূহ (Status, Photo, MarkDonated, LoadDonors)
         window.toggleStatus = async (uid, current) => {
             await updateDoc(doc(db, "donors", uid), { isActive: !current });
             viewProfile(uid);
         };
 
-        window.uploadPhoto = async (uid) => {
-            const file = document.getElementById('picUp').files[0];
-            if (!file) return;
-            const refImg = ref(storage, `profiles/${uid}`);
-            const snap = await uploadBytes(refImg, file);
-            const url = await getDownloadURL(snap.ref);
-            await updateDoc(doc(db, "donors", uid), { photo: url });
-            viewProfile(uid);
-        };
-
         window.markDonated = async (uid, count) => {
             if(confirm("রক্তদান সম্পন্ন হয়েছে তো?")) {
-                await updateDoc(doc(db, "donors", uid), { count: count + 1, lastDate: new Date().toISOString().split('T')[0] });
+                await updateDoc(doc(db, "donors", uid), { count: count + 1 });
                 viewProfile(uid);
             }
         };
 
         window.loadDonors = async () => {
             const container = document.getElementById('donorList');
-            container.innerHTML = '<p class="text-center p-10 font-bold text-gray-400 animate-pulse">খোঁজা হচ্ছে...</p>';
+            container.innerHTML = '<p class="text-center p-10 font-bold text-gray-400">খোঁজা হচ্ছে...</p>';
             const qry = query(collection(db, "donors"), where("isActive", "==", true), orderBy("createdAt", "desc"));
             const snap = await getDocs(qry);
             container.innerHTML = '';
             snap.forEach(docSnap => {
                 const d = docSnap.data();
                 const card = document.createElement('div');
-                card.className = "glass-card p-5 flex justify-between items-center cursor-pointer hover:bg-white transition shadow-sm border border-gray-100";
+                card.className = "glass-card p-5 flex justify-between items-center cursor-pointer border border-gray-100 shadow-sm";
                 card.onclick = () => viewProfile(d.uid);
-                card.innerHTML = `<div class="flex items-center gap-4"><img src="${d.photo || 'https://via.placeholder.com/150'}" class="w-14 h-14 rounded-full object-cover border-2 border-red-500 shadow-sm"><div><h4 class="font-bold text-gray-800">${d.name}</h4><p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">📍 ${d.union}</p></div></div><div class="text-right"><span class="text-2xl font-black text-red-600">${d.group}</span><br><span class="text-[9px] bg-red-50 text-red-500 px-2 py-0.5 rounded-full font-black uppercase">${d.count || 0} Times</span></div>`;
+                card.innerHTML = `<div class="flex items-center gap-4"><div class="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center font-black text-xl border border-red-200">${d.group}</div><div><h4 class="font-bold text-gray-800">${d.name}</h4><p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">📍 ${d.union}</p></div></div><div class="text-right"><span class="text-[9px] bg-red-100 text-red-500 px-2 py-1 rounded-full font-black uppercase">${d.count || 0} বার</span></div>`;
                 container.appendChild(card);
             });
         };
 
-        // Auth Logic
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
             try { await signInWithEmailAndPassword(auth, document.getElementById('lEmail').value, document.getElementById('lPass').value); }
@@ -244,14 +219,14 @@
         document.getElementById('signupForm').onsubmit = async (e) => {
             e.preventDefault();
             const dob = document.getElementById('rDob').value;
-            if(getAge(dob) < 18) return alert("রক্তদানের জন্য বয়স কমপক্ষে ১৮ বছর হতে হবে!");
+            if(getAge(dob) < 18) return alert("১৮ বছরের নিচে রক্তদান সম্ভব নয়।");
             try {
                 const cred = await createUserWithEmailAndPassword(auth, document.getElementById('rEmail').value, document.getElementById('rPass').value);
                 await setDoc(doc(db, "donors", cred.user.uid), {
                     name: document.getElementById('rName').value, uid: cred.user.uid, dob: dob, count: 0,
-                    group: "A+", phone: "", union: "মোগরাপাড়া", photo: "", isActive: true, createdAt: new Date()
+                    group: "B+", phone: "", union: "মোগরাপাড়া", isActive: true, createdAt: new Date()
                 });
-                alert("নিবন্ধন সফল! এবার আপনার প্রোফাইল সাজান।");
+                alert("নিবন্ধন সফল!");
             } catch(err) { alert(err.message); }
         };
 
@@ -259,7 +234,6 @@
     </script>
 
     <script>
-        // UI Helpers
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -272,7 +246,6 @@
         }
         function openAbout() { document.getElementById('aboutModal').style.display = 'block'; }
         function closeAbout() { document.getElementById('aboutModal').style.display = 'none'; }
-        window.onclick = function(event) { if (event.target == document.getElementById('aboutModal')) closeAbout(); }
     </script>
 </body>
 </html>
